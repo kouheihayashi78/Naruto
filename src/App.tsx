@@ -4,13 +4,21 @@ import "./App.css";
 
 function App() {
   const [characterInfo, setCharacterInfo] = useState([]);
+  const [pagerNum, setPagerNum] = useState(1);
   useEffect(() => {
-    fetchCharacters();
-  }, []);
-  const fetchCharacters = async () => {
+    fetchCharacters(pagerNum);
+  }, [pagerNum]);
+  const fetchCharacters = async (page) => {
     const apiUrl = "https://narutodb.xyz/api/character";
-    const res = await axios.get(apiUrl);
+    const res = await axios.get(apiUrl, { params: {page} });
     setCharacterInfo(res.data.characters);
+  };
+  const nextPager = () => {
+    setPagerNum(parseInt(pagerNum) + 1)
+  }
+
+  const prevPager = (e) => {
+    setPagerNum(parseInt(pagerNum) - 1)
   };
   return (
     <div className="container">
@@ -35,6 +43,11 @@ function App() {
               </div>
             );
           })}
+        </div>
+        <div className="pager">
+          <button className="prev" onClick={prevPager}>Previous</button>
+          <span className="page-number">{pagerNum}</span>
+          <button className="next" onClick={nextPager}>Next</button>
         </div>
       </main>
     </div>
