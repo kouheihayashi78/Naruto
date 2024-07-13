@@ -27,6 +27,11 @@ function App() {
   };
   return (
     <div className="container">
+      <div className="header">
+        <div className="header-content">
+          <img src="logo.png" alt="logo" className="logo" />
+        </div>
+      </div>
       {isLoading ? <h3>Now Loading...</h3> :
         <main>
           <div className="cards-container">
