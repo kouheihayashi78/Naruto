@@ -4,26 +4,50 @@ import "./App.css";
 
 const limit = 20;
 
+interface Character {
+  id: number;
+  name: string;
+  images: string[];
+  debut?: {
+    appearsIn?: string;
+  };
+  personal?: {
+    affiliation?: string;
+  }
+}
+
 function App() {
-  const [characterInfo, setCharacterInfo] = useState([]);
-  const [pagerNum, setPagerNum] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [characterInfo, setCharacterInfo] = useState<Character[]>([]);
+  const [pagerNum, setPagerNum] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   useEffect(() => {
     fetchCharacters(pagerNum);
   }, [pagerNum]);
-  const fetchCharacters = async (page) => {
+
+  // ナルトdbからデータを非同期で取得する処理
+  const fetchCharacters = async (page: number): Promise<void> => {
     setIsLoading(true);
     const apiUrl = "https://narutodb.xyz/api/character";
-    const res = await axios.get(apiUrl, { params: {page, limit} });
-    setCharacterInfo(res.data.characters);
-    setIsLoading(false);
+    try {
+      const res = await axios.get(apiUrl, { params: {page, limit} });
+      setCharacterInfo(res.data.characters);
+      
+    } catch (error) {
+      console.error("API通信中にエラーが起きました。", error)
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // 次のページに切り替わるページャー
   const nextPager = () => {
-    setPagerNum(parseInt(pagerNum) + 1)
+    setPagerNum(pagerNum + 1)
   }
 
-  const prevPager = (e) => {
-    setPagerNum(parseInt(pagerNum) - 1)
+  // 前のページに切り替わるページャー
+  const prevPager = () => {
+    setPagerNum(pagerNum - 1)
   };
   return (
     <div className="container">
